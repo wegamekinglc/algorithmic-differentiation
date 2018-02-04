@@ -28,9 +28,18 @@ public class AdStarterTest {
         for(int i =0; i < NB_TESTS; ++i) {
             double f = AdStarter.f(A[i]);
             double[] dFwd = FiniteDifferenceFirstOrder.differentiate(new f_Function(), A[i], EPSILON, FiniteDifferenceSchemes.FORWARD);
+            double[] dBac = FiniteDifferenceFirstOrder.differentiate(new f_Function(), A[i], EPSILON, FiniteDifferenceSchemes.BACKWARD);
+            double[] dSym = FiniteDifferenceFirstOrder.differentiate(new f_Function(), A[i], EPSILON, FiniteDifferenceSchemes.SYMMETRICAL);
+            double[] d30r = FiniteDifferenceFirstOrder.differentiate(new f_Function(), A[i], EPSILON, FiniteDifferenceSchemes.FOURTH_ORDER);
             DoubleDerivatives dSad = AdStarter.f_Sad(A[i]);
+            DoubleDerivatives dSad2 = AdStarter.f_Sad_Optimized(A[i]);
             assertEquals("adStarterAnalysis " + i, f, dSad.value(), TOLERANCE_VALUE);
             assertArrayEquals("adStarterAnalysis " + i, dFwd, dSad.derivatives(), TOLERANCE_DELTA_1);
+            assertArrayEquals("adStarterAnalysis " + i, dBac, dSad.derivatives(), TOLERANCE_DELTA_1);
+            assertArrayEquals("adStarterAnalysis " + i, dSym, dSad.derivatives(), TOLERANCE_DELTA_2);
+            assertArrayEquals("adStarterAnalysis " + i, d30r, dSad.derivatives(), TOLERANCE_DELTA_2);
+            assertEquals("adStarterAnalysis " + i, f, dSad2.value(), TOLERANCE_VALUE);
+            assertArrayEquals("adStarterAnalysis " + i, dSad.derivatives(), dSad2.derivatives(), TOLERANCE_DELTA_2);
         }
     }
 }
